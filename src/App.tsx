@@ -1,5 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CameraScreen } from 'react-native-camera-kit';
 
 import {
@@ -15,7 +14,9 @@ import {
 
 const App = () => {
   const [isPermitted, setIsPermitted] = useState(false);
-  const [captureImage, setCaptureImage] = useState([]);
+  const [captureImage, setCaptureImage] = useState('');
+
+  useEffect(() => { console.log({ captureImage }); }, [captureImage]);
 
   const styles = StyleSheet.create({
     container: {
@@ -103,8 +104,8 @@ const App = () => {
     }
   }
 
-  function onBottomButtonPressed(event) {
-    const images = JSON.stringify(event.captureImage);
+  function onBottomButtonPressed(event: any) {
+    const images = JSON.stringify(event.captureImages);
     if (event.type === 'left') {
       setIsPermitted(false);
     } else if (event.type === 'right') {
@@ -142,13 +143,14 @@ const App = () => {
           captureButtonImageStyle={styles.icon}
           cameraFlipImageStyle={styles.icon}
           showFrame={undefined}
-          scanBarcode={undefined} l
-          aserColor={undefined}
+          scanBarcode={undefined}
+          laserColor={undefined}
           frameColor={undefined}
           torchImageStyle={styles.icon}
-          onReadCode={function (event: any): void {
-            throw new Error('Function not implemented.');
-          }} />
+        //onReadCode={function (event: any): void {
+        //  throw new Error('Function not implemented.');
+        //}}
+        />
       )
         : (
           <View>
