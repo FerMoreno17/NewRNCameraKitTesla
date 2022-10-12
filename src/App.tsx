@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, { useState } from 'react';
 import { CameraScreen } from 'react-native-camera-kit';
+import ImageResizer from '@bam.tech/react-native-image-resizer';
+import RNFS from 'react-native-fs';
 
 import {
   Alert,
+  Image,
   PermissionsAndroid,
   Platform,
   Pressable,
@@ -15,8 +19,6 @@ import {
 const App = () => {
   const [isPermitted, setIsPermitted] = useState(false);
   const [captureImage, setCaptureImage] = useState('');
-
-  useEffect(() => { console.log({ captureImage }); }, [captureImage]);
 
   const styles = StyleSheet.create({
     container: {
@@ -104,21 +106,48 @@ const App = () => {
     }
   }
 
-  function onBottomButtonPressed(event: any) {
-    const images = JSON.stringify(event.captureImages);
+  async function onBottomButtonPressed(event: any) {
+    const image = event.image;
+    cropImage(image.uri);
     if (event.type === 'left') {
       setIsPermitted(false);
-    } else if (event.type === 'right') {
-      setIsPermitted(false);
-      setCaptureImage(images);
-    } else {
-      Alert.alert(
-        event.type,
-        images,
-        [{ text: 'OK', onPress: () => console.log('OK pressed') }],
-        { cancelable: false },
-      );
     }
+  }
+
+  async function cropImage(imageUri: string) {
+    const anchoRecomendado = 600;
+    const altoRecomendado = 720;
+    const result = await ImageResizer.createResizedImage(
+      imageUri,
+      anchoRecomendado,
+      altoRecomendado,
+      'JPEG',
+      50,
+      0,
+      undefined,
+      false,
+      {
+        mode: 'contain',
+        onlyScaleDown: true,
+      }
+    );
+    console.log({ result });
+    const img64 = await RNFS.readFile(result.uri, 'base64');
+    console.log({ img64 });
+    setCaptureImage(result.uri);
+
+  }
+
+  if (captureImage !== (undefined || '')) {
+    return (
+      <>
+        <View style={{ flex: 1 }}>
+          <Image source={{ uri: captureImage }} style={{ width: '100%', height: '100%', resizeMode: 'cover' }} />
+        </View>
+        <Pressable onPress={() => { setIsPermitted(false); }}>
+          <Text>volver</Text>
+        </Pressable>
+      </>);
   }
 
   return (
@@ -147,9 +176,6 @@ const App = () => {
           laserColor={undefined}
           frameColor={undefined}
           torchImageStyle={styles.icon}
-        //onReadCode={function (event: any): void {
-        //  throw new Error('Function not implemented.');
-        //}}
         />
       )
         : (

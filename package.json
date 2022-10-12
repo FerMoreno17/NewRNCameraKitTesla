@@ -10,9 +10,13 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@bam.tech/react-native-image-resizer": "^3.0.3",
+    "@react-native-community/image-editor": "^2.3.0",
     "react": "18.1.0",
     "react-native": "0.70.2",
-    "react-native-camera-kit": "^13.0.0"
+    "react-native-camera-kit": "^13.0.0",
+    "react-native-fs": "^2.20.0",
+    "react-native-image-picker": "^4.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
